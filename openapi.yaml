@@ -1,0 +1,238 @@
+openapi: 3.0.3
+info:
+  title: OpenAPI 3.0
+  description: ""
+  version: 1.0.11
+servers:
+  - url: "http: //localhost:5295"
+tags:
+  - name: event
+    description: Everything about events
+  - name: hardware-reservation
+    description: Everything about hardware reservations 
+paths:
+  /events:
+    get:
+      tags:
+        - event
+      summary: Get all events
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+  /events/{eventId}:
+    get:
+      tags:
+        - event
+      summary: Get a single event by id
+      description: Find a single event by given id
+      operationId: findEventById
+      parameters:
+        - name: eventId
+          in: path
+          description: Guid of an event
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/EventWithStatistic'
+  /events/{eventId}/hardware-reservations:
+    get:
+      tags:
+        - hardware-reservation
+      summary: Get hardware reservertion for an event
+      description: Find a single hardware reservertion by given event id
+      operationId: findHardwareReservationByEventId
+      parameters:
+        - name: eventId
+          in: path
+          description: Guid of an event
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/HardwareReservation'
+        '404':
+          description: Hardware reservation not found.
+    post:
+      tags:
+        - hardware-reservation
+      summary: Add hardware reservertion for an event
+      description: Add new hardware reservertion for event id
+      operationId: AddHardwareReservationForEventId
+      parameters:
+        - name: eventId
+          in: path
+          description: Guid of an event
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Contains hardware reservation information
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/HardwareReservationComponent'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/HardwareReservation'
+        '404':
+          description: Hardware reservation not found.
+  /events/{eventId}/hardware-reservations/approved:
+    put:
+      tags:
+        - hardware-reservation
+      summary: Approves a pending hardware reservation
+      operationId: approveHardwareReservation
+      parameters:
+        - name: eventId
+          in: path
+          description: Guid of an event
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+components:
+  schemas:
+    HardwareReservation:
+      type: object
+      properties:
+        eventId:
+          type: string
+          example: "7c63631c-18d4-4395-9c1e-886554265eb0"
+        status:
+          type: string
+          description: Hardware reserved Status
+          example: Pending
+          enum:
+            - Pending
+            - Approved
+        reservedHardware:
+          type: array
+          items:
+            $ref: '#/components/schemas/HardwareReservationComponent'
+    HardwareReservationComponent:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "Turnstile"
+          enum:
+            - Turnstile
+            - WirelessHandheldScanner
+            - MobileScanningTerminal
+        quantity:
+          type: integer
+          format: int64
+          example: 10
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "7c63631c-18d4-4395-9c1e-886554265eb0"
+        year:
+          type: integer
+          format: int64
+          example: 2024
+        name:
+          type: string
+          example: "ADITUS Code Challenge 2024"
+        type:
+          type: string
+          example: "OnSite"
+          enum:
+            - OnSite
+            - Online
+            - Hybrid
+        startDate:
+          type: string
+          example: "2024-11-24T00:00:00"
+        endDate:
+          type: string
+          example: "2024-11-30T00:00:00"
+    EventWithStatistic:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "7c63631c-18d4-4395-9c1e-886554265eb0"
+        year:
+          type: integer
+          format: int64
+          example: 2024
+        name:
+          type: string
+          example: "ADITUS Code Challenge 2024"
+        type:
+          type: string
+          example: "OnSite"
+          enum:
+            - OnSite
+            - Online
+            - Hybrid
+        startDate:
+          type: string
+          example: "2024-11-24T00:00:00"
+        endDate:
+          type: string
+          example: "2024-11-30T00:00:00"
+        onlineStatistic:
+          type: object
+          description: "Can be null"
+          properties:
+            attendess:
+              type: integer
+              format: int64
+              example: 3720
+            invites:
+              type: integer
+              format: int64
+              example: 6103
+            visits:
+              type: integer
+              format: int64
+              example: 6606
+            virtualRooms:
+              type: integer
+              format: int64
+              example: 145
+        onSiteStatistic:
+          type: object
+          description: "Can be null"
+          properties:
+            visitorsCount:
+              type: integer
+              format: int64
+              example: 3720
+            exhibitorsCount:
+              type: integer
+              format: int64
+              example: 6103
+            boothsCount:
+              type: integer
+              format: int64
+              example: 6606
