@@ -11,6 +11,7 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 });
 builder.Services.AddSingleton<IStatisticService, StatisticService>();
 builder.Services.AddSingleton<IEventService, EventService>();
+builder.Services.AddSingleton<IHardwareReservationService, HardwareReservationService>();
 
 builder.Services.Configure<StatisticApiSettings>(builder.Configuration.GetSection("StatisticApiSettings"));
 builder.Services.AddHttpClient(HttpClientNames.StatisticApiClientName, (serviceProvider, client) =>

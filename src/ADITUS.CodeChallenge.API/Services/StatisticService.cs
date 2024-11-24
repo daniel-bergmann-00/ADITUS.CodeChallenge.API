@@ -1,6 +1,6 @@
 using System.Text.Json;
 using ADITUS.CodeChallenge.API.Domain;
-using ADITUS.CodeChallenge.API.Exception;
+using ADITUS.CodeChallenge.API.BusinessException;
 
 namespace ADITUS.CodeChallenge.API.Services
 {
