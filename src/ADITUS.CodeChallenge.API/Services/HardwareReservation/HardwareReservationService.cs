@@ -109,6 +109,10 @@ namespace ADITUS.CodeChallenge.API.Services
         {
           throw new HardwareReservationNotEnoughStockException();
         }
+      }
+
+      foreach (var component in hardwareComponents)
+      {
         var hardwareComponent = _hardwareStock.FirstOrDefault(x => x.Type == component.Type);
         hardwareComponent.Quantity -= component.Quantity;
       }
